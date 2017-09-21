@@ -3,16 +3,16 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: thinking place
-subtitle: guess what? it's all bullshit!
-description:
-author: Yangyang Xu
+title: 名称不可为空
+subtitle: 你给起个名？
+description: 闲言碎语，七拼八凑
+author : 嘘~痒痒!
 language: zh-Hans
 timezone: Asia/Shanghai
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://masterwho.win
+url: http://xuyangyang.xyz
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
