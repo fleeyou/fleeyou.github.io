@@ -11,6 +11,8 @@ categories:
 
 More often than not, people who write Go have some sort of opinion on its error handling model. Depending on your experience with other languages, you may be used to different approaches. That’s why I’ve decided to write this article, as despite being relatively opinionated, I think drawing on my experiences can be useful in the debate. The main issues I wanted to cover are that it is difficult to force good error handling practice, that errors don’t have stack traces, and that error handling itself is too verbose. However I’ve looked at some potential workarounds for these problems which could help negate the issues somewhat.
 
+<!-- more -->
+
 ## Quick Comparison to Other Languages
 
 [In Go, all errors are values.](https://blog.golang.org/errors-are-values) Because of this, a fair amount of functions end up returning an `error`, looking something like this:
@@ -329,3 +331,4 @@ This works, but doesn’t help too much as it ends up being more verbose than th
 After reading this, you might think that by picking on `errors` I’m opposed to Go. But that’s not the case, I’m just describing how it compares to my experience with the `try catch` model. It’s a great language for systems programming, and some outstanding tools have been produced by it. To name a few there is [Kubernetes](https://kubernetes.io/), [Docker](https://www.docker.com/), [Terraform](https://www.terraform.io/), [Hoverfly](http://hoverfly.io/en/latest/) and others. There’s also the advantage of your tiny, highly performant, native binary. But errors have been difficult to adjust to. I hope my reasoning makes sense, and also that some of the solutions and workarounds could be of help.
 
 [原文链接](https://opencredo.com/why-i-dont-like-error-handling-in-go/)
+
