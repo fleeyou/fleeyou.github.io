@@ -15,7 +15,7 @@ More often than not, people who write Go have some sort of opinion on its error 
 
 ## Quick Comparison to Other Languages
 
-[In Go, all errors are values.](https://blog.golang.org/errors-are-values) Because of this, a fair amount of functions end up returning an `error`, looking something like this:
+[In Go, all errors are values.][1] Because of this, a fair amount of functions end up returning an `error`, looking something like this:
 
 ```golang
 func (s *SomeStruct) Function() (string, error)
@@ -77,7 +77,7 @@ func viewCompanies(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-This isn’t a good solution, as we would have to repeat the same error handling across all of our handler functions. It would be much better to do it all in one place for maintainability purposes. Fortunately, there is [an alternative by Andrew Gerrand on the Go blog](https://blog.golang.org/error-handling-and-go) which works quite nicely. We can create a Type which does http error handling: 
+This isn’t a good solution, as we would have to repeat the same error handling across all of our handler functions. It would be much better to do it all in one place for maintainability purposes. Fortunately, there is [an alternative by Andrew Gerrand on the Go blog][2] which works quite nicely. We can create a Type which does http error handling: 
 
 ```golang
 type appHandler func(http.ResponseWriter, *http.Request) error
@@ -98,7 +98,7 @@ func init() {
 }
 ```
 
-Then all we need to do is change the signature of handler functions so they return `errors`. This works nicely, as we have been able to apply the [dry](https://en.wikipedia.org/wiki/Don't_repeat_yourself) principle and not re-use code unnecessarily – now we return default errors in a single place.
+Then all we need to do is change the signature of handler functions so they return `errors`. This works nicely, as we have been able to apply the [dry][3] principle and not re-use code unnecessarily – now we return default errors in a single place.
 
 ## Error Context
 
@@ -116,11 +116,10 @@ func viewUsers(w http.ResponseWriter, r *http.Request) error {
 }
 ```
 
-The call chain could get quite deep, and throughout it, all sorts of errors could be instantiated in different places. This post by [Russ Cox](https://research.swtch.com/go2017) explains the best practice to prevent this from being too much of a problem:
+The call chain could get quite deep, and throughout it, all sorts of errors could be instantiated in different places. This post by [Russ Cox][4] explains the best practice to prevent this from being too much of a problem:
 
-    Part of the intended contract for error reporting in Go is that functions include relevant available
-    context, including the operation being attempted (such as the function name and its arguments)
-    
+	Part of the intended contract for error reporting in Go is that functions include relevant available
+	context, including the operation being attempted (such as the function name and its arguments)
 The example given is a call to the OS package:
 
 ```golang
@@ -188,7 +187,7 @@ But Go seems to not have this information by design.
 In terms of getting context information – Russ also mentions the community are talking about some potential interfaces for stripping out error contexts. It would be interesting to hear more about this.
 
 ## Solution to the Stack Trace Problem
-Fortunately, after doing some searching, I found this excellent [Go Errors](https://github.com/go-errors/errors) library which helps solves the problem, by adding stack traces to errors:
+Fortunately, after doing some searching, I found this excellent [Go Errors][5] library which helps solves the problem, by adding stack traces to errors:
 
 ```golang
 if errors.Is(err, crashy.Crashed) {
@@ -200,7 +199,7 @@ However, I’d think it would be an improvement for this feature to have first c
 
 ## What Should We Do with an Error?
 
-We also have to think about what should happen when an error occurs. [It’s definitely useful that they can’t crash your program](https://davidnix.io/post/error-handling-in-go/), and it’s also idiomatic to handle them immediately:
+We also have to think about what should happen when an error occurs. [It’s definitely useful that they can’t crash your program][6], and it’s also idiomatic to handle them immediately:
 
 ```golang
 err := method()
@@ -256,7 +255,7 @@ public void doSomething() throws SomeErrorToPropogate {
 Personally I think both of these example achieve the same thing, only the `Exception` model is less verbose and more flexible. If anything, I find the `if err != nil` to feel like boilerplate. Maybe there is a way that it could be cleaned up?
 
 ## Treating Multiple Statements That Fail as a Block
-To begin with, I did some more reading and found a relatively pragmatic solution on the by [Rob Pike on the Go Blog](https://blog.golang.org/errors-are-values).
+To begin with, I did some more reading and found a relatively pragmatic solution on the by [Rob Pike on the Go Blog][7].
 
 He defines a struct with a method which wraps errors:
 
@@ -328,7 +327,19 @@ This works, but doesn’t help too much as it ends up being more verbose than th
 
 ## Conclusion
 
-After reading this, you might think that by picking on `errors` I’m opposed to Go. But that’s not the case, I’m just describing how it compares to my experience with the `try catch` model. It’s a great language for systems programming, and some outstanding tools have been produced by it. To name a few there is [Kubernetes](https://kubernetes.io/), [Docker](https://www.docker.com/), [Terraform](https://www.terraform.io/), [Hoverfly](http://hoverfly.io/en/latest/) and others. There’s also the advantage of your tiny, highly performant, native binary. But errors have been difficult to adjust to. I hope my reasoning makes sense, and also that some of the solutions and workarounds could be of help.
+After reading this, you might think that by picking on `errors` I’m opposed to Go. But that’s not the case, I’m just describing how it compares to my experience with the `try catch` model. It’s a great language for systems programming, and some outstanding tools have been produced by it. To name a few there is [Kubernetes][8], [Docker][9], [Terraform][10], [Hoverfly][11] and others. There’s also the advantage of your tiny, highly performant, native binary. But errors have been difficult to adjust to. I hope my reasoning makes sense, and also that some of the solutions and workarounds could be of help.
 
-[原文链接](https://opencredo.com/why-i-dont-like-error-handling-in-go/)
+[原文链接][12]
 
+[1]:	https://blog.golang.org/errors-are-values
+[2]:	https://blog.golang.org/error-handling-and-go
+[3]:	https://en.wikipedia.org/wiki/Don't_repeat_yourself
+[4]:	https://research.swtch.com/go2017
+[5]:	https://github.com/go-errors/errors
+[6]:	https://davidnix.io/post/error-handling-in-go/
+[7]:	https://blog.golang.org/errors-are-values
+[8]:	https://kubernetes.io/
+[9]:	https://www.docker.com/
+[10]:	https://www.terraform.io/
+[11]:	http://hoverfly.io/en/latest/
+[12]:	https://opencredo.com/why-i-dont-like-error-handling-in-go/
