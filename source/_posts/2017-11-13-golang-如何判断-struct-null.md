@@ -23,8 +23,7 @@ type Person struct {
 var person Person    // in Golang
 Person person;       // in Java
 ```
-如何判断它是否为空呢？在Java中我们可以用`person==null`来判断Person对象是否为空，不幸的是，Golang如果照葫芦画瓢，即`person==nil`，不出意外的会得到一个编译错误
-> cannot convert nil to type Person  
+如何判断它是否为空呢？在Java中我们可以用`person==null`来判断Person对象是否为空，不幸的是，Golang如果照葫芦画瓢，即`person==nil`，不出意外的会得到一个编译错误`cannot convert nil to type Person`
 
 nil在Golang中相当Java中的null，它表示某一个变量为空。nil只能赋值给指针、channel、func、interface、map或slice类型的变量，将nil赋值给其他类型的变量会引发panic。  
 如果想要判断一个struct对象是否为未初始化的对象，按照如下方式进行：
@@ -69,7 +68,7 @@ type Person struct {
 假如在Person中用[]byte类型保存了另外一个字段：地址(addr)，那么按照上述方法就会GG了，不出意外，得到如下错误：
 `invalid operation: Person literal == foo (struct containing []byte cannot be compared)`
 
-其实不止上述应用场景，包含切片, map 等类型的struct也是无法相互比较的。例如，我们无法进行`foo==bar`的比较操作。这个限制在Golang的相关文档中也有体现：
+其实不止上述应用场景，包含切片, map 等类型的struct也是无法相互比较的。例如，我们无法进行`foo==bar`的比较操作。这个限制在Golang的[相关文档](https://golang.org/ref/spec#Assignability)中也有体现：
 > Struct values are comparable if all their fields are comparable. Two struct values are equal if their corresponding non-blank fields are equal...
 
 所以，上述这种判断空struct对象的方法有个大前提：struct中的字段类型必须是可以“比较”的。这种情况下，有两种解决办法：
