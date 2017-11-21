@@ -94,3 +94,11 @@ theme: next
 deploy:
   type: git
   repository: git@github.com:fleeyou/fleeyou.github.io.git
+
+# 配置RSS
+feed:
+  type: rss2
+  path: rss2.xml
+  limit: 5
+  hub: 
+  content: 'true'
