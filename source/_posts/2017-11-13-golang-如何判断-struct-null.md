@@ -12,14 +12,14 @@ categories:
 
 <!-- more -->
 
-```
+```golang
 type Person struct {
     id   int64
     name string
 }
 ```
 &emsp;&emsp;我们声明了一个Person类型的对象:
-```
+```golang
 var person Person    // in Golang
 Person person;       // in Java
 ```
@@ -28,7 +28,7 @@ Person person;       // in Java
 &emsp;&emsp;nil在Golang中相当Java中的null，它表示某一个变量为空。nil只能赋值给指针、channel、func、interface、map或slice类型的变量，将nil赋值给其他类型的变量会引发panic。  
 &emsp;&emsp;如果想要判断一个struct对象是否为未初始化的对象，按照如下方式进行：
 
-```
+```golang
 package main
 
 import "fmt"
@@ -58,7 +58,7 @@ foo is empty
 bar is not empty
 ```
 &emsp;&emsp;但是，假如Person中保存了其他类型的字段，例如：
-```
+```golang
 type Person struct {
     id   int 64
     name string
@@ -74,7 +74,7 @@ type Person struct {
 &emsp;&emsp;所以，上述这种判断空struct对象的方法有个大前提：struct中的字段类型必须是可以“比较”的。这种情况下，有两种解决办法：
 
 * 利用反射
-```
+```golang
 package main
 
 import "fmt"
@@ -105,7 +105,7 @@ foo is empty
 bar is not empty
 ```
 * 额外增加一个字段，用于表示struct是否被初始化
-```
+```golang
 package main
 
 import "fmt"
@@ -136,6 +136,8 @@ func main() {
 foo is empty
 bar is not empty
 ```
-&emsp;&emsp;两种方法各有优劣，利用反射无需额外增加字段，但是利用发射往往意味着牺牲点性能，但是，若非经常性的操作，感觉还可以接受。额外增加字段的方法，恼人的是每次初始化struct的时候都需要记得把这个字段赋值，要不然就很尴尬了。
+&emsp;&emsp;两种方法各有优劣，利用反射无需额外增加字段，但是利用发射往往意味着牺牲点性能，但是，若非经常性的操作，感觉还可以接受。额外增加字段的方法，恼人的是每次初始化struct的时候都需要记得把这个字段赋值，要不然就很尴尬了。  
+
+以上。
 
 [1]:	https://golang.org/ref/spec#Assignability

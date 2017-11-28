@@ -331,6 +331,8 @@ if err != nil {
 
 [原文链接][12]
 
+以上。
+
 [1]:	https://blog.golang.org/errors-are-values
 [2]:	https://blog.golang.org/error-handling-and-go
 [3]:	https://en.wikipedia.org/wiki/Don't_repeat_yourself

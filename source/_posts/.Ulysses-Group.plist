@@ -66,18 +66,14 @@
 					<integer>13</integer>
 				</dict>
 			</dict>
-			<key>无标题 - 2.md</key>
+			<key>2017-11-27-Golang结构体方法.md</key>
 			<dict>
-				<key>explicitUnassignment</key>
-				<true/>
-				<key>firstUnassignment</key>
-				<real>532788991.19016302</real>
 				<key>lastModification</key>
-				<real>532788991.19016302</real>
+				<real>533547124.84000498</real>
 				<key>version</key>
 				<dict>
 					<key>dbc2b18e9d99b06459af2e0192e46fdd8066ef333b3ca3dab68c4b9cc9afb7e4</key>
-					<integer>25</integer>
+					<integer>27</integer>
 				</dict>
 			</dict>
 			<key>无标题.md</key>
@@ -85,13 +81,13 @@
 				<key>explicitUnassignment</key>
 				<true/>
 				<key>firstUnassignment</key>
-				<real>532788988.16156399</real>
+				<real>533547132.84665298</real>
 				<key>lastModification</key>
-				<real>532788988.16156399</real>
+				<real>533547132.84665298</real>
 				<key>version</key>
 				<dict>
 					<key>dbc2b18e9d99b06459af2e0192e46fdd8066ef333b3ca3dab68c4b9cc9afb7e4</key>
-					<integer>24</integer>
+					<integer>28</integer>
 				</dict>
 			</dict>
 		</dict>
@@ -105,6 +101,9 @@
 			<string>2017-09-12-What-I-Don’t-Like-About-Error-Handling-in-Go-and-How-to-Work-Around-It-转.md</string>
 		</array>
 		<array>
+			<string>无标题.md</string>
+		</array>
+		<array>
 			<string>2017-11-13-golang-如何判断-struct-null.md</string>
 		</array>
 		<array>
@@ -115,8 +114,9 @@
 		</array>
 		<array>
 			<string>2017-11-16-Golang“继承”.md</string>
-			<string>无标题.md</string>
-			<string>无标题 - 2.md</string>
+		</array>
+		<array>
+			<string>2017-11-27-Golang结构体方法.md</string>
 		</array>
 	</array>
 	<key>storeFormatVersion</key>
@@ -126,7 +126,7 @@
 		<key>sheetClusters</key>
 		<dict>
 			<key>dbc2b18e9d99b06459af2e0192e46fdd8066ef333b3ca3dab68c4b9cc9afb7e4</key>
-			<integer>25</integer>
+			<integer>28</integer>
 		</dict>
 	</dict>
 </dict>
