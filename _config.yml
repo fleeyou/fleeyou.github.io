@@ -102,3 +102,7 @@ feed:
   limit: 5
   hub: 
   content: 'true'
+
+ # Extensions
+## Plugins: http://hexo.io/plugins/
+plugins: hexo-generate-feed
