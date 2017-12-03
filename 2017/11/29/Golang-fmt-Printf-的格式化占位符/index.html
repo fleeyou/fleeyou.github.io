@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/avatar.jpg?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/avatar.jpg?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Golang," />
+
+
+
+
+
+  <link rel="alternate" href="/rss2.xml" title="π square" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="&amp;emsp; &amp;emsp;今天看Golang fmt官方文档，看到了占位符的相关内容，记录下。">
+<meta name="keywords" content="Golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang fmt.Printf 的格式化占位符">
+<meta property="og:url" content="http://xuyangyang.xyz/2017/11/29/Golang-fmt-Printf-的格式化占位符/index.html">
+<meta property="og:site_name" content="π square">
+<meta property="og:description" content="&amp;emsp; &amp;emsp;今天看Golang fmt官方文档，看到了占位符的相关内容，记录下。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-01T16:24:23.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang fmt.Printf 的格式化占位符">
+<meta name="twitter:description" content="&amp;emsp; &amp;emsp;今天看Golang fmt官方文档，看到了占位符的相关内容，记录下。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xuyangyang.xyz/2017/11/29/Golang-fmt-Printf-的格式化占位符/"/>
+
+
+
+
+
+  <title>Golang fmt.Printf 的格式化占位符 | π square</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">π square</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xuyangyang.xyz/2017/11/29/Golang-fmt-Printf-的格式化占位符/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="嘘~痒痒!">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="π square">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Golang fmt.Printf 的格式化占位符</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-29T09:30:03+08:00">
+                2017-11-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/学习/" itemprop="url" rel="index">
+                    <span itemprop="name">学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  904
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  4
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&emsp; &emsp;今天看Golang fmt<a href="https://golang.org/pkg/fmt/" target="_blank" rel="external">官方文档</a>，看到了占位符的相关内容，记录下。  </p>
+<a id="more"></a>
+<p>&emsp; &emsp; Golang的占位符与C语言的占位符很类似，但是要精简的多。下面按照数据类型作为分类标准，介绍下各个占位符的使用。  </p>
+<ul>
+<li><p>通用占位符<br>&emsp; &emsp;Golang使用“%v”作为一个“万能”的占位符，编译器可以根据数据类型自动推断最终的数据展示格式。但是，这个通用占位符还是有定制的空间的。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># 示例数据</div><div class="line"><span class="keyword">type</span> animal <span class="keyword">struct</span> &#123;</div><div class="line">  name <span class="keyword">string</span></div><div class="line">  age  <span class="keyword">int</span></div><div class="line">&#125;</div><div class="line">cat := animal&#123;name: <span class="string">"kitty"</span>, age: <span class="number">3</span>&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">占位符</th>
+<th style="text-align:center">说明</th>
+<th style="text-align:center">示例</th>
+<th style="text-align:center">输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">%v</td>
+<td style="text-align:center">输出默认格式</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%v&quot;, cat)</code></td>
+<td style="text-align:center">{kitty 3}</td>
+</tr>
+<tr>
+<td style="text-align:center">%+v</td>
+<td style="text-align:center">为struct类型添加字段名称</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%+v&quot;, cat)</code></td>
+<td style="text-align:center">{name:kitty age:3}</td>
+</tr>
+<tr>
+<td style="text-align:center">%#v</td>
+<td style="text-align:center">输出完整语法表示</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%#v&quot;, cat)</code></td>
+<td style="text-align:center">main.animal{name:”kitty”, age:3}</td>
+</tr>
+<tr>
+<td style="text-align:center">%T</td>
+<td style="text-align:center">打印数据类型</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%T&quot;, cat)</code></td>
+<td style="text-align:center">main.animal</td>
+</tr>
+<tr>
+<td style="text-align:center">%%</td>
+<td style="text-align:center">打印百分号%</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%%&quot;)</code></td>
+<td style="text-align:center">%</td>
+</tr>
+</tbody>
+</table>
+<p>   &emsp;&emsp;除了上述通用的占位符，针对各个不同的数据类型，Golang有相应的专用占位符。</p>
+<ul>
+<li>布尔型<br>&emsp;&emsp;针对布尔型的数据，如果想要打印”true”或”false”, 可以使用%t作为占位符。  </li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">占位符</th>
+<th style="text-align:center">说明</th>
+<th style="text-align:center">示例</th>
+<th style="text-align:center">输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">%t</td>
+<td style="text-align:center">输出true或false</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%t&quot;,ture)</code></td>
+<td style="text-align:center">true</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>整型</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">占位符</th>
+<th style="text-align:center">说明</th>
+<th style="text-align:center">示例</th>
+<th style="text-align:center">输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">%b</td>
+<td style="text-align:center">二进制表示</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%b&quot;, 233)</code></td>
+<td style="text-align:center">11101001</td>
+</tr>
+<tr>
+<td style="text-align:center">%o</td>
+<td style="text-align:center">八进制表示</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%o&quot;, 233)</code></td>
+<td style="text-align:center">351</td>
+</tr>
+<tr>
+<td style="text-align:center">%d</td>
+<td style="text-align:center">十进制表示</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%d&quot;, 0351)</code></td>
+<td style="text-align:center">233</td>
+</tr>
+<tr>
+<td style="text-align:center">%x</td>
+<td style="text-align:center">十六进制表示(小写字母)</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%x&quot;, 233)</code></td>
+<td style="text-align:center">e9</td>
+</tr>
+<tr>
+<td style="text-align:center">%X</td>
+<td style="text-align:center">十六进制表示(大写字母)</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%X&quot;, 233)</code></td>
+<td style="text-align:center">E9</td>
+</tr>
+<tr>
+<td style="text-align:center">%c</td>
+<td style="text-align:center">Unicode码点对于的字符</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%c&quot;, 0x75D2)</code></td>
+<td style="text-align:center">痒</td>
+</tr>
+<tr>
+<td style="text-align:center">%U</td>
+<td style="text-align:center">输出Unicode,等价于”U+%04X”</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%U&quot;, &#39;痒&#39;)</code></td>
+<td style="text-align:center">0x75D2</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>浮点型和复数</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">占位符</th>
+<th style="text-align:center">说明</th>
+<th style="text-align:center">示例</th>
+<th style="text-align:center">输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">%b</td>
+<td style="text-align:center">无小数部分，指数基数为二的科学计数法</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%b&quot;, 65536.0)</code></td>
+<td style="text-align:center">4503606499318170p-36</td>
+</tr>
+<tr>
+<td style="text-align:center">%e</td>
+<td style="text-align:center">科学计数法</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%e&quot;, 65536.0)</code></td>
+<td style="text-align:center">6.553610e+04</td>
+</tr>
+<tr>
+<td style="text-align:center">%E</td>
+<td style="text-align:center">科学计数法</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%e&quot;, 65536.0)</code></td>
+<td style="text-align:center">6.553610E+04</td>
+</tr>
+<tr>
+<td style="text-align:center">%f</td>
+<td style="text-align:center">没有指数的小数</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%f&quot;, 65536.1)</code></td>
+<td style="text-align:center">65536.1</td>
+</tr>
+<tr>
+<td style="text-align:center">%F</td>
+<td style="text-align:center">没有指数的小数</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%F&quot;, 65536.1)</code></td>
+<td style="text-align:center">65536.1</td>
+</tr>
+<tr>
+<td style="text-align:center">%g</td>
+<td style="text-align:center">以更紧凑的方式自动选择%e或%f(末尾无0)</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%g&quot;, 65536.1)</code></td>
+<td style="text-align:center">65536.1</td>
+</tr>
+<tr>
+<td style="text-align:center">%G</td>
+<td style="text-align:center">以更紧凑的方式自动选择%E或%f(末尾无0)</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%G&quot;, 65536.1)</code></td>
+<td style="text-align:center">65536.1</td>
+</tr>
+<tr>
+<td style="text-align:center">%2.1g</td>
+<td style="text-align:center">输出结果宽度2(左侧补空格),结果共1位数字</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%2.1g&quot;, 1.21)</code></td>
+<td style="text-align:center">1(左侧有一空格)</td>
+</tr>
+<tr>
+<td style="text-align:center">%2.1f</td>
+<td style="text-align:center">输出结果共2位(左侧补空格),小数1位</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%2.1f&quot;, 1.21)</code></td>
+<td style="text-align:center">1.2</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>字符串及字节切片</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">占位符</th>
+<th style="text-align:center">说明</th>
+<th style="text-align:center">示例</th>
+<th style="text-align:center">输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">%s</td>
+<td style="text-align:center">字符串表示</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%s&quot;, &quot;hello, world&quot;)</code></td>
+<td style="text-align:center">hello, world</td>
+</tr>
+<tr>
+<td style="text-align:center">%q</td>
+<td style="text-align:center">带双引号的字符串表示</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%q&quot;, &quot;hello, world&quot;)</code></td>
+<td style="text-align:center">“hello, world”</td>
+</tr>
+<tr>
+<td style="text-align:center">%x</td>
+<td style="text-align:center">对字节序列的十六进制表示(小写字母)</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%x&quot;, &quot;hello, world&quot;)</code></td>
+<td style="text-align:center">68656c6c6f2c20776f726c64</td>
+</tr>
+<tr>
+<td style="text-align:center">%X</td>
+<td style="text-align:center">对字节序列的十六进制表示(大写字母)</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;X%&quot;, &quot;hello, world&quot;)</code></td>
+<td style="text-align:center">68656C6C6F2C20776F726C64</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>指针</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">占位符</th>
+<th style="text-align:center">说明</th>
+<th style="text-align:center">示例</th>
+<th style="text-align:center">输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">%p</td>
+<td style="text-align:center">十六进制表示指针值, 0x打头</td>
+<td style="text-align:center"><code>fmt.Printf(&quot;%p&quot;, &amp;var)</code></td>
+<td style="text-align:center">0xc4200160c8</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>再探通用占位符<br>对于，各数据类型，通用占位符对应的特定占位符为：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">数据类型</th>
+<th style="text-align:center">对应的特定占位符</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">bool</td>
+<td style="text-align:center">%t</td>
+</tr>
+<tr>
+<td style="text-align:left">int, int8等</td>
+<td style="text-align:center">%d</td>
+</tr>
+<tr>
+<td style="text-align:left">uint, uint8等</td>
+<td style="text-align:center">%d 或%#v(%#v)</td>
+</tr>
+<tr>
+<td style="text-align:left">float32, complex64等</td>
+<td style="text-align:center">%g</td>
+</tr>
+<tr>
+<td style="text-align:left">string</td>
+<td style="text-align:center">%s</td>
+</tr>
+<tr>
+<td style="text-align:left">chan</td>
+<td style="text-align:center">%p</td>
+</tr>
+<tr>
+<td style="text-align:left">指针</td>
+<td style="text-align:center">%p</td>
+</tr>
+<tr>
+<td style="text-align:left">struct</td>
+<td style="text-align:center">{field0 field1…}</td>
+</tr>
+<tr>
+<td style="text-align:left">array, slice</td>
+<td style="text-align:center">[elem0 elem1…]</td>
+</tr>
+<tr>
+<td style="text-align:left">maps</td>
+<td style="text-align:center">map[key1:valule1 key2:value2]</td>
+</tr>
+<tr>
+<td style="text-align:left">struct,array,slice,maps 指针</td>
+<td style="text-align:center">&amp;{}, &amp;[], &amp;map[]</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>占位符辅助标识<ul>
+<li>+: 打印数值正负号  </li>
+<li>-: 在右侧填充空格  </li>
+<li>#: 为八进制/十六进制添加前缀; %#p将去掉0x前缀;%#q将打印原始字符串(若有单引号则输出)  </li>
+<li>0: 用0而非空格填充  </li>
+<li>空格: % d将用空格代替原本的正负号; % x或% X打印字符串或字节切片时，字节直接将以空格分隔  </li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color:
+#ccc;font-size:14px;">-------------本文结束,感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2017/11/29/Golang-fmt-Printf-的格式化占位符/">Golang fmt.Printf 的格式化占位符</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 嘘~痒痒! 的个人博客">嘘~痒痒!</a></p>
+  <p><span>发布时间:</span>2017年11月29日 - 09:11</p>
+  <p><span>最后更新:</span>2017年12月02日 - 00:12</p>
+  <p><span>原始链接:</span><a href="/2017/11/29/Golang-fmt-Printf-的格式化占位符/" title="Golang fmt.Printf 的格式化占位符">http://xuyangyang.xyz/2017/11/29/Golang-fmt-Printf-的格式化占位符/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://xuyangyang.xyz/2017/11/29/Golang-fmt-Printf-的格式化占位符/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({   
+          title: "",   
+          text: '复制成功',   
+          html: false,
+          timer: 500,   
+          showConfirmButton: false
+        });
+      });
+    }));  
+</script>
+
+
+      
+    </div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Golang/" rel="tag"><i class="fa fa-tag"></i> Golang</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/27/Golang结构体方法/" rel="next" title="Golang结构体方法">
+                <i class="fa fa-chevron-left"></i> Golang结构体方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/avatar.jpg"
+                alt="嘘~痒痒!" />
+            
+              <p class="site-author-name" itemprop="name">嘘~痒痒!</p>
+              <p class="site-description motion-element" itemprop="description">闲言碎语，七拼八凑</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/rss2.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/fleeyou" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:fleeyou@outlook.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-shower"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xuyangyang</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共6.6k字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2149397"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'C5sCVgOulMHoq6xDPH43X7kH-gzGzoHsz',
+        app_key: 'JPjAMf7IKHqilxdyezkC1vOp',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

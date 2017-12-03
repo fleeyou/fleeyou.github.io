@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/avatar.jpg?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/avatar.jpg?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="golang,搬运工," />
+
+
+
+
+
+  <link rel="alternate" href="/rss2.xml" title="π square" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="&amp;emsp;&amp;emsp;More often than not, people who write Go have some sort of opinion on its error handling model. Depending on your experience with other languages, you may be used to different approaches.">
+<meta name="keywords" content="golang,搬运工">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What I Don’t Like About Error Handling in Go, and How to Work Around It[转]">
+<meta property="og:url" content="http://xuyangyang.xyz/2017/09/12/What-I-Don’t-Like-About-Error-Handling-in-Go-and-How-to-Work-Around-It-转/index.html">
+<meta property="og:site_name" content="π square">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;More often than not, people who write Go have some sort of opinion on its error handling model. Depending on your experience with other languages, you may be used to different approaches.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-01T14:42:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="What I Don’t Like About Error Handling in Go, and How to Work Around It[转]">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;More often than not, people who write Go have some sort of opinion on its error handling model. Depending on your experience with other languages, you may be used to different approaches.">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xuyangyang.xyz/2017/09/12/What-I-Don’t-Like-About-Error-Handling-in-Go-and-How-to-Work-Around-It-转/"/>
+
+
+
+
+
+  <title>What I Don’t Like About Error Handling in Go, and How to Work Around It[转] | π square</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">π square</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xuyangyang.xyz/2017/09/12/What-I-Don’t-Like-About-Error-Handling-in-Go-and-How-to-Work-Around-It-转/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="嘘~痒痒!">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="π square">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">What I Don’t Like About Error Handling in Go, and How to Work Around It[转]</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-12T22:33:08+08:00">
+                2017-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/学习/" itemprop="url" rel="index">
+                    <span itemprop="name">学习</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/学习/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,032
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  13
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&emsp;&emsp;More often than not, people who write Go have some sort of opinion on its error handling model. Depending on your experience with other languages, you may be used to different approaches. That’s why I’ve decided to write this article, as despite being relatively opinionated, I think drawing on my experiences can be useful in the debate. The main issues I wanted to cover are that it is difficult to force good error handling practice, that errors don’t have stack traces, and that error handling itself is too verbose. However I’ve looked at some potential workarounds for these problems which could help negate the issues somewhat.</p>
+<a id="more"></a>
+<h2 id="Quick-Comparison-to-Other-Languages"><a href="#Quick-Comparison-to-Other-Languages" class="headerlink" title="Quick Comparison to Other Languages"></a>Quick Comparison to Other Languages</h2><p>&emsp;&emsp;<a href="https://blog.golang.org/errors-are-values" target="_blank" rel="external">In Go, all errors are values.</a> Because of this, a fair amount of functions end up returning an <code>error</code>, looking something like this:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *SomeStruct)</span> <span class="title">Function</span><span class="params">()</span> <span class="params">(<span class="keyword">string</span>, error)</span></span></div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;As a result of this, the calling code will regularly have <code>if</code> statements to check for them:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">bytes, err := someStruct.Function()</div><div class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">  <span class="comment">// Process error</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Another approach is the <code>try-catch</code> model that is used in other languages such as Java, C#, Javascript, Objective C, Python etc. You could see the following Java code as synonymous to the previous Go examples, declaring <code>throws</code> instead of returning an <code>error</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">function</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span></div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;And then doing <code>try-catch</code> instead of <code>if err != nil</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">  String result = someObject.function()</div><div class="line">  <span class="comment">// continue logic</span></div><div class="line">&#125;</div><div class="line"><span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">  <span class="comment">// process exception</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Of course, there are more differences than this. For example, an <code>error</code> can’t crash your program, whereas an <code>Exception</code> can. There are others as well, and I want to focus on them in this article.</p>
+<h2 id="Implementing-Centralised-Error-Handling"><a href="#Implementing-Centralised-Error-Handling" class="headerlink" title="Implementing Centralised Error Handling"></a>Implementing Centralised Error Handling</h2><p>&emsp;&emsp;Taking a step back, let’s look at why and how we might want to have a centralised place for handling errors.</p>
+<p>&emsp;&emsp;An example most people would be familiar with is a web service – if some unexpected server-side error were to happen, we would generate a 5xx error. At a first pass in Go you might implement this:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</div><div class="line">    http.HandleFunc(<span class="string">"/users"</span>, viewUsers)</div><div class="line">    http.HandleFunc(<span class="string">"/companies"</span>, viewCompanies)</div><div class="line">&#125;</div><div class="line"> </div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">viewUsers</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</div><div class="line">    user <span class="comment">// some code</span></div><div class="line">    <span class="keyword">if</span> err := userTemplate.Execute(w, user); err != <span class="literal">nil</span> &#123;</div><div class="line">        http.Error(w, err.Error(), <span class="number">500</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"> </div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">viewCompanies</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</div><div class="line">    companies = <span class="comment">// some code</span></div><div class="line">    <span class="keyword">if</span> err := companiesTemplate.Execute(w, companies); err != <span class="literal">nil</span> &#123;</div><div class="line">        http.Error(w, err.Error(), <span class="number">500</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;This isn’t a good solution, as we would have to repeat the same error handling across all of our handler functions. It would be much better to do it all in one place for maintainability purposes. Fortunately, there is <a href="https://blog.golang.org/error-handling-and-go" target="_blank" rel="external">an alternative by Andrew Gerrand on the Go blog</a> which works quite nicely. We can create a Type which does http error handling: </p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> appHandler <span class="function"><span class="keyword">func</span><span class="params">(http.ResponseWriter, *http.Request)</span> <span class="title">error</span></span></div><div class="line"><span class="function"> </span></div><div class="line"><span class="function"><span class="title">func</span> <span class="params">(fn appHandler)</span> <span class="title">ServeHTTP</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</div><div class="line">    <span class="keyword">if</span> err := fn(w, r); err != <span class="literal">nil</span> &#123;</div><div class="line">        http.Error(w, err.Error(), <span class="number">500</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;And then it can be used as a wrapper to decorate our handlers:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</div><div class="line">    http.Handle(<span class="string">"/users"</span>, appHandler(viewUsers))</div><div class="line">    http.Handle(<span class="string">"/companies"</span>, appHandler(viewCompanies))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Then all we need to do is change the signature of handler functions so they return <code>errors</code>. This works nicely, as we have been able to apply the <a href="https://en.wikipedia.org/wiki/Don&#39;t_repeat_yourself" target="_blank" rel="external">dry</a> principle and not re-use code unnecessarily – now we return default errors in a single place.</p>
+<h2 id="Error-Context"><a href="#Error-Context" class="headerlink" title="Error Context"></a>Error Context</h2><p>&emsp;&emsp;In the previous example, there are many potential errors which we could receive, all of which could be generated in many parts of the call stack. This is when things start to get tricky.</p>
+<p>&emsp;&emsp;To demonstrate this, we can expand on our handler. It’s more likely to look like this as the template execution is not the only place where an error could occur:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">viewUsers</span><span class="params">(w http.ResponseWriter, r *http.Request)</span> <span class="title">error</span></span> &#123;</div><div class="line">    user, err := findUser(r.formValue(<span class="string">"id"</span>)) </div><div class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">      <span class="keyword">return</span> err;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> userTemplate.Execute(w, user);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;The call chain could get quite deep, and throughout it, all sorts of errors could be instantiated in different places. This post by <a href="https://research.swtch.com/go2017" target="_blank" rel="external">Russ Cox</a> explains the best practice to prevent this from being too much of a problem:</p>
+<pre><code>Part of the intended contract for error reporting in Go is that functions include relevant available
+context, including the operation being attempted (such as the function name and its arguments)
+</code></pre><p>&emsp;&emsp;The example given is a call to the OS package:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">err := os.Remove(<span class="string">"/tmp/nonexist"</span>)</div><div class="line">fmt.Println(err)</div></pre></td></tr></table></figure>
+<p>Which prints the output:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">remove /tmp/nonexist: no such file or directory</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;To summarise, you are outputting the method called, the arguments given, and the specific thing that went wrong, immediately after doing it. When creating an <code>Exception</code> message in another language you would also follow this practice. So if we stuck to these rules in our <code>viewUsers</code> handler, it could almost always be clear what the cause of an error is.</p>
+<p>&emsp;&emsp;The problem comes from people not following this best practice, and quite often in third party Go libraries you will see messages like:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Oh no I broke</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;Which is just not helpful – you don’t know anything about the context which makes it really hard to debug. Even worse is when these sorts of errors are ignored or returned really far back up the stack until they are handled:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">  <span class="keyword">return</span> err</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;This means that when they happened isn’t communicated.</p>
+<p>&emsp;&emsp;It should be noted that all these mistakes can be made in an Exception driven model – poor error messages, swallowing exceptions etc. So why do I think that model is more helpful?</p>
+<p>&emsp;&emsp;If we’re dealing with a poor exception message, we are still able to know where it occurred in the call stack. This is because of stack traces, which raises something I don’t get about Go – you have the concept of panic in Go which contains a stack trace, but an error which does not. I think the reasoning is that a panic can crash your program, so requires a stack trace, whereas a handled error does not as you are supposed to do something about it where it occurs.</p>
+<p>&emsp;&emsp;So let’s go back to our previous example – a third party library with a poor error message, which just gets propagated all the way up the call chain. Do you think debugging would be easier if you had this?</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">panic</span>: Oh no I broke</div><div class="line">[signal <span class="number">0xb</span> code=<span class="number">0x1</span> addr=<span class="number">0x0</span> pc=<span class="number">0xfc90f</span>]</div><div class="line"> </div><div class="line">goroutine <span class="number">1103</span> [running]:</div><div class="line"><span class="built_in">panic</span>(<span class="number">0x4bed</span>00, <span class="number">0xc82000c0b0</span>)</div><div class="line">/usr/local/<span class="keyword">go</span>/src/runtime/<span class="built_in">panic</span>.<span class="keyword">go</span>:<span class="number">481</span> +<span class="number">0x3e6</span></div><div class="line">github.com/Org/app/core.(_app).captureRequest(<span class="number">0xc820163340</span>, <span class="number">0x0</span>, <span class="number">0x55bd</span>50, <span class="number">0x0</span>, <span class="number">0x0</span>)</div><div class="line">/home/ubuntu/.go_workspace/src/github.com/Org/App/core/main.<span class="keyword">go</span>:<span class="number">313</span> +<span class="number">0x12cf</span></div><div class="line">github.com/Org/app/core.(_app).processRequest(<span class="number">0xc820163340</span>, <span class="number">0xc82064e1c0</span>, <span class="number">0xc82002aab8</span>, <span class="number">0x1</span>)</div><div class="line">/home/ubuntu/.go_workspace/src/github.com/Org/App/core/main.<span class="keyword">go</span>:<span class="number">203</span> +<span class="number">0xb6</span></div><div class="line">github.com/Org/app/core.NewProxy.func2(<span class="number">0xc82064e1c0</span>, <span class="number">0xc820bb2000</span>, <span class="number">0xc820bb2000</span>, <span class="number">0x1</span>)</div><div class="line">/home/ubuntu/.go_workspace/src/github.com/Org/App/core/proxy.<span class="keyword">go</span>:<span class="number">51</span> +<span class="number">0x2a</span></div><div class="line">github.com/Org/app/core/vendor/github.com/rusenask/goproxy.FuncReqHandler.Handle(<span class="number">0xc820d</span>a36e0, <span class="number">0xc82064e1c0</span>, <span class="number">0xc820bb2000</span>, <span class="number">0xc5001</span>, <span class="number">0xc820b4a0a0</span>)</div><div class="line">/home/ubuntu/.go_workspace/src/github.com/Org/app/core/vendor/github.com/rusenask/goproxy/actions.<span class="keyword">go</span>:<span class="number">19</span> +<span class="number">0x30</span></div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;I think this might be something which has been overlooked in the design of Go – not that things aren’t overlooked in all languages.</p>
+<p>&emsp;&emsp;If we use Java as an arbitrary example, one of the silliest mistakes people make is not logging the stack trace:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">LOGGER.error(ex.getMessage()) <span class="comment">// Doesn't log stack trace</span></div><div class="line">LOGGER.error(ex.getMessage(), ex) <span class="comment">// Does log stack trace</span></div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;But Go seems to not have this information by design.</p>
+<p>&emsp;&emsp;In terms of getting context information – Russ also mentions the community are talking about some potential interfaces for stripping out error contexts. It would be interesting to hear more about this.</p>
+<h2 id="Solution-to-the-Stack-Trace-Problem"><a href="#Solution-to-the-Stack-Trace-Problem" class="headerlink" title="Solution to the Stack Trace Problem"></a>Solution to the Stack Trace Problem</h2><p>&emsp;&emsp;Fortunately, after doing some searching, I found this excellent <a href="https://github.com/go-errors/errors" target="_blank" rel="external">Go Errors</a> library which helps solves the problem, by adding stack traces to errors:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> errors.Is(err, crashy.Crashed) &#123;</div><div class="line">  fmt.Println(err.(*errors.Error).ErrorStack())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;However, I’d think it would be an improvement for this feature to have first class citizenship in the language, so you wouldn’t have to fiddle around with types. Also, if we are working with a third party library like in the previous example then it is probably not using <code>crashy</code> – we still have the same problem.</p>
+<h2 id="What-Should-We-Do-with-an-Error"><a href="#What-Should-We-Do-with-an-Error" class="headerlink" title="What Should We Do with an Error?"></a>What Should We Do with an Error?</h2><p>&emsp;&emsp;We also have to think about what should happen when an error occurs. <a href="https://davidnix.io/post/error-handling-in-go/" target="_blank" rel="external">It’s definitely useful that they can’t crash your program</a>, and it’s also idiomatic to handle them immediately:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">err := method()</div><div class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">  <span class="comment">// some logic that I must do now in the event of an error!</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;But what happens if we want to call lots of methods which return errors, and then handle them all in the same place? Something like this:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">err := doSomething()</div><div class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">  <span class="comment">// handle the error here</span></div><div class="line">&#125;</div><div class="line"> </div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">doSomething</span><span class="params">()</span> <span class="title">error</span></span> &#123;</div><div class="line">  err := someMethod()</div><div class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">    <span class="keyword">return</span> err</div><div class="line">  &#125;</div><div class="line">  err = someOther()</div><div class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">    <span class="keyword">return</span> err</div><div class="line">  &#125;</div><div class="line">  someOtherMethod()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;It feels a little verbose, whereas in other languages you can treat multiple statements that fail as a block:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">  someMethod()</div><div class="line">  someOther()</div><div class="line">  someOtherMethod()</div><div class="line">&#125;</div><div class="line"><span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">  <span class="comment">// process exception</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Or just propagate failure in the method signature:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span> <span class="keyword">throws</span> SomeErrorToPropogate </span>&#123;</div><div class="line">  someMethod()</div><div class="line">  someOther()</div><div class="line">  someOtherMethod()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Personally I think both of these example achieve the same thing, only the <code>Exception</code> model is less verbose and more flexible. If anything, I find the <code>if err != nil</code> to feel like boilerplate. Maybe there is a way that it could be cleaned up?</p>
+<h2 id="Treating-Multiple-Statements-That-Fail-as-a-Block"><a href="#Treating-Multiple-Statements-That-Fail-as-a-Block" class="headerlink" title="Treating Multiple Statements That Fail as a Block"></a>Treating Multiple Statements That Fail as a Block</h2><p>&emsp;&emsp;To begin with, I did some more reading and found a relatively pragmatic solution on the by <a href="https://blog.golang.org/errors-are-values" target="_blank" rel="external">Rob Pike on the Go Blog</a>.</p>
+<p>&emsp;&emsp;He defines a struct with a method which wraps errors:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> errWriter <span class="keyword">struct</span> &#123;</div><div class="line">    w   io.Writer</div><div class="line">    err error</div><div class="line">&#125;</div><div class="line"> </div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ew *errWriter)</span> <span class="title">write</span><span class="params">(buf []<span class="keyword">byte</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">if</span> ew.err != <span class="literal">nil</span> &#123;</div><div class="line">        <span class="keyword">return</span></div><div class="line">    &#125;</div><div class="line">    _, ew.err = ew.w.Write(buf)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;This let’s us do:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">ew := &amp;errWriter&#123;w: fd&#125;</div><div class="line">ew.write(p0[a:b])</div><div class="line">ew.write(p1[c:d])</div><div class="line">ew.write(p2[e:f])</div><div class="line"><span class="comment">// and so on</span></div><div class="line"><span class="keyword">if</span> ew.err != <span class="literal">nil</span> &#123;</div><div class="line">    <span class="keyword">return</span> ew.err</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;This is also a good solution, but I still feel like something is missing – as we can’t re-use this pattern. If we wanted a method which took a string as an argument, then we’d have to change the function signature. Or what if we didn’t want to perform a write? We could try and make it more generic:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> errWrapper <span class="keyword">struct</span> &#123;</div><div class="line">    err error</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ew *errWrapper)</span> <span class="title">do</span><span class="params">(f <span class="keyword">func</span>()</span> <span class="title">error</span>)</span> &#123;</div><div class="line">    <span class="keyword">if</span> ew.err != <span class="literal">nil</span> &#123;</div><div class="line">        <span class="keyword">return</span></div><div class="line">    &#125;</div><div class="line">    ew.err = f();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;But we have the same problem that it won’t compile if we want to call functions which have different arguments. However you simply wrap those function calls:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">w := &amp;errWrapper&#123;&#125;</div><div class="line"> </div><div class="line">w.do(<span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">error</span></span> &#123;</div><div class="line">    <span class="keyword">return</span> someFunction(<span class="number">1</span>, <span class="number">2</span>);</div><div class="line">&#125;)</div><div class="line"> </div><div class="line">w.do(<span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">error</span></span> &#123;</div><div class="line">    <span class="keyword">return</span> otherFunction(<span class="string">"foo"</span>);</div><div class="line">&#125;)</div><div class="line"> </div><div class="line">err := w.err</div><div class="line"> </div><div class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line"><span class="comment">// process error here</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;This works, but doesn’t help too much as it ends up being more verbose than the standard <code>if err != nil</code> checks. I would be interested to hear if anyone can offer any other solutions. Maybe the language itself needs some sort of way to propagate or group errors in a less bloated fashion – but it feels like it’s been specifically designed to not do that.</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>&emsp;&emsp;After reading this, you might think that by picking on <code>errors</code> I’m opposed to Go. But that’s not the case, I’m just describing how it compares to my experience with the <code>try catch</code> model. It’s a great language for systems programming, and some outstanding tools have been produced by it. To name a few there is <a href="https://kubernetes.io/" target="_blank" rel="external">Kubernetes</a>, <a href="https://www.docker.com/" target="_blank" rel="external">Docker</a>, <a href="https://www.terraform.io/" target="_blank" rel="external">Terraform</a>, <a href="http://hoverfly.io/en/latest/" target="_blank" rel="external">Hoverfly</a> and others. There’s also the advantage of your tiny, highly performant, native binary. But errors have been difficult to adjust to. I hope my reasoning makes sense, and also that some of the solutions and workarounds could be of help.</p>
+<p><a href="https://opencredo.com/why-i-dont-like-error-handling-in-go/" target="_blank" rel="external">原文链接</a></p>
+<p>以上。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color:
+#ccc;font-size:14px;">-------------本文结束,感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag"><i class="fa fa-tag"></i> golang</a>
+          
+            <a href="/tags/搬运工/" rel="tag"><i class="fa fa-tag"></i> 搬运工</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/11/see-you-again/" rel="next" title="see you again">
+                <i class="fa fa-chevron-left"></i> see you again
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/13/golang-如何判断-struct-null/" rel="prev" title="golang 如何判断 struct==null?">
+                golang 如何判断 struct==null? <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/avatar.jpg"
+                alt="嘘~痒痒!" />
+            
+              <p class="site-author-name" itemprop="name">嘘~痒痒!</p>
+              <p class="site-description motion-element" itemprop="description">闲言碎语，七拼八凑</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/rss2.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/fleeyou" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:fleeyou@outlook.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Comparison-to-Other-Languages"><span class="nav-number">1.</span> <span class="nav-text">Quick Comparison to Other Languages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implementing-Centralised-Error-Handling"><span class="nav-number">2.</span> <span class="nav-text">Implementing Centralised Error Handling</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Error-Context"><span class="nav-number">3.</span> <span class="nav-text">Error Context</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Solution-to-the-Stack-Trace-Problem"><span class="nav-number">4.</span> <span class="nav-text">Solution to the Stack Trace Problem</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-Should-We-Do-with-an-Error"><span class="nav-number">5.</span> <span class="nav-text">What Should We Do with an Error?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Treating-Multiple-Statements-That-Fail-as-a-Block"><span class="nav-number">6.</span> <span class="nav-text">Treating Multiple Statements That Fail as a Block</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">7.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-shower"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xuyangyang</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共6.6k字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2149397"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'C5sCVgOulMHoq6xDPH43X7kH-gzGzoHsz',
+        app_key: 'JPjAMf7IKHqilxdyezkC1vOp',
+        placeholder: 'Comment input placeholder'
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
