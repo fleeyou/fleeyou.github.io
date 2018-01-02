@@ -28,4 +28,5 @@ categories:
 	* 在bar的下标为i处插入foo：`bar=append(a[:i],append(b,a[i:]...)...)`
 	* 返回并删除bar中下标最高的元素：`x,foo=foo[len(foo)-1],a[:len(foo)-1]`  
 
-以上。
+2. 日期转换
+	
